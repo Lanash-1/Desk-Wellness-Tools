@@ -3,7 +3,7 @@
 Focus timer, hydration tracker and break reminders for people who sit at a desk all day.
 One codebase ships as a **Windows / macOS tray app** (Tauri 2) and as an **installable web app**.
 
-> Status: milestone **M0 – scaffold**. The shell runs on both platforms; features land milestone by milestone (see below).
+> Status: milestone **M1 – Pomodoro + notifications**. The focus timer works end to end on both platforms (absolute-time engine, heartbeat, OS notifications, sounds, tray/title countdown, restart recovery). Reminders, water tracking and stats follow in the next milestones.
 
 ## Features (v1 scope)
 
@@ -40,7 +40,12 @@ pnpm e2e            # browser smoke tests (Playwright)
 pnpm lint && pnpm typecheck && pnpm format:check
 pnpm build          # web production build in dist/
 pnpm tauri build    # desktop installers in src-tauri/target/release/bundle/
+
+node scripts/generate-sounds.mjs   # regenerate the bundled notification sounds (WAV)
 ```
+
+If Playwright's bundled browser is not installed locally, point the tests at an existing Chromium with
+`PLAYWRIGHT_CHROMIUM_PATH=/path/to/chrome pnpm e2e`.
 
 macOS note: notifications only work from a bundled app, so test them with
 `pnpm tauri build --debug`, not `pnpm tauri dev`.

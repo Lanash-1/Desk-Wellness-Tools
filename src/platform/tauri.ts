@@ -73,7 +73,7 @@ export function createTauriPlatform(): Platform {
       subscribe(cb) {
         let unlisten: (() => void) | null = null;
         // Rust emits `heartbeat` every second; it keeps ticking while the window is hidden.
-        listen<number>('heartbeat', (e) => cb(e.payload))
+        listen<number>('heartbeat', () => cb(Date.now()))
           .then((u) => (unlisten = u))
           .catch(() => {});
         // Safety net in case the event stream stalls.

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { Card } from '@/components/Card';
 import { PageHeader } from '@/components/PageHeader';
 import { Toggle } from '@/components/Toggle';
+import { NumberField } from '@/components/NumberField';
 import { usePlatform } from '@/app/usePlatform';
 import { useSettings } from '@/app/useSettings';
 import { REMINDER_KINDS, type ThemePreference } from '@/core/models';
@@ -58,6 +59,63 @@ export function SettingsPage() {
             label="Sounds"
             checked={settings.sound.enabled}
             onChange={(enabled) => updateSettings({ sound: { ...settings.sound, enabled } })}
+          />
+        </Card>
+
+        <Card title="Focus timer">
+          <NumberField
+            label="Focus length"
+            value={settings.pomodoro.focusMin}
+            min={1}
+            max={120}
+            suffix="min"
+            onChange={(focusMin) =>
+              updateSettings({ pomodoro: { ...settings.pomodoro, focusMin } })
+            }
+          />
+          <NumberField
+            label="Short break"
+            value={settings.pomodoro.shortBreakMin}
+            min={1}
+            max={60}
+            suffix="min"
+            onChange={(shortBreakMin) =>
+              updateSettings({ pomodoro: { ...settings.pomodoro, shortBreakMin } })
+            }
+          />
+          <NumberField
+            label="Long break"
+            value={settings.pomodoro.longBreakMin}
+            min={1}
+            max={90}
+            suffix="min"
+            onChange={(longBreakMin) =>
+              updateSettings({ pomodoro: { ...settings.pomodoro, longBreakMin } })
+            }
+          />
+          <NumberField
+            label="Long break after"
+            value={settings.pomodoro.longBreakEvery}
+            min={1}
+            max={12}
+            suffix="sessions"
+            onChange={(longBreakEvery) =>
+              updateSettings({ pomodoro: { ...settings.pomodoro, longBreakEvery } })
+            }
+          />
+          <Toggle
+            label="Start breaks automatically"
+            checked={settings.pomodoro.autoStartBreak}
+            onChange={(autoStartBreak) =>
+              updateSettings({ pomodoro: { ...settings.pomodoro, autoStartBreak } })
+            }
+          />
+          <Toggle
+            label="Start the next focus session automatically"
+            checked={settings.pomodoro.autoStartFocus}
+            onChange={(autoStartFocus) =>
+              updateSettings({ pomodoro: { ...settings.pomodoro, autoStartFocus } })
+            }
           />
         </Card>
 

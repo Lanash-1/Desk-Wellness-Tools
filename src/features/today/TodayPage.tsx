@@ -4,10 +4,13 @@ import { usePlatform } from '@/app/usePlatform';
 import { useSettings } from '@/app/useSettings';
 import { REMINDER_KINDS } from '@/core/models';
 import { REMINDER_LABELS } from '@/core/settings/defaults';
+import { NotificationBanner } from '@/features/notifications/NotificationBanner';
+import { useTimerStore } from '@/store/timerStore';
 
 export function TodayPage() {
   const settings = useSettings();
   const platform = usePlatform();
+  const completedFocus = useTimerStore((s) => s.state.completedFocus);
 
   return (
     <>
@@ -19,9 +22,12 @@ export function TodayPage() {
             : 'Keep this tab open (or install the app) so reminders can reach you.'
         }
       />
+      <NotificationBanner />
       <div className="grid gap-4 sm:grid-cols-2">
         <Card title="Focus">
-          <p className="text-3xl font-semibold">0 sessions</p>
+          <p className="text-3xl font-semibold">
+            {completedFocus} {completedFocus === 1 ? 'session' : 'sessions'}
+          </p>
           <p className="mt-1 text-sm text-slate-500">
             Goal: {settings?.goals.focusSessionsPerDay ?? '…'} per day
           </p>

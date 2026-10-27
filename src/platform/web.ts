@@ -104,7 +104,7 @@ export function createWebPlatform(): Platform {
           worker = new Worker(new URL('./heartbeat.worker.ts', import.meta.url), {
             type: 'module',
           });
-          worker.onmessage = (e: MessageEvent<number>) => cb(e.data);
+          worker.onmessage = () => cb(Date.now());
         } catch {
           fallback = setInterval(() => cb(Date.now()), 1000);
         }

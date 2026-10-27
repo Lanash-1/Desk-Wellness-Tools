@@ -11,7 +11,7 @@ export function createAudio(baseUrl: string): Platform['audio'] {
   function element(soundId: string): HTMLAudioElement {
     let el = cache.get(soundId);
     if (!el) {
-      el = new Audio(`${baseUrl}sounds/${soundId}.mp3`);
+      el = new Audio(`${baseUrl}sounds/${soundId}.wav`);
       el.preload = 'auto';
       cache.set(soundId, el);
     }
