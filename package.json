@@ -3,7 +3,11 @@
   "private": true,
   "version": "0.1.0",
   "type": "module",
-  "description": "Desk Wellness – focus timer, hydration and break reminders for people who work at a desk all day.",
+  "packageManager": "pnpm@10.28.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "description": "Desk Wellness \u2013 focus timer, hydration and break reminders for people who work at a desk all day.",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
