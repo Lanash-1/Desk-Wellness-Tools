@@ -101,14 +101,25 @@ export function createWebPlatform(): Platform {
       subscribe(cb) {
         let worker: Worker | null = null;
         let fallback: ReturnType<typeof setInterval> | null = null;
+        const startFallback = () => {
+          if (fallback === null) fallback = setInterval(() => cb(Date.now()), 1000);
+        };
         try {
           worker = new Worker(new URL('./heartbeat.worker.ts', import.meta.url), {
             type: 'module',
           });
           worker.onmessage = () => cb(Date.now());
+          // Load failures are reported asynchronously; fall back to a page timer.
+          worker.onerror = () => {
+            worker?.terminate();
+            worker = null;
+            startFallback();
+          };
         } catch {
-          fallback = setInterval(() => cb(Date.now()), 1000);
+          startFallback();
         }
+        // Safety net: a slow page timer in case the worker is starved or throttled.
+        const safety = setInterval(() => cb(Date.now()), 5000);
         const onVisible = () => {
           if (document.visibilityState === 'visible') cb(Date.now());
         };
@@ -116,7 +127,8 @@ export function createWebPlatform(): Platform {
         window.addEventListener('focus', onVisible);
         return () => {
           worker?.terminate();
-          if (fallback) clearInterval(fallback);
+          if (fallback !== null) clearInterval(fallback);
+          clearInterval(safety);
           document.removeEventListener('visibilitychange', onVisible);
           window.removeEventListener('focus', onVisible);
         };

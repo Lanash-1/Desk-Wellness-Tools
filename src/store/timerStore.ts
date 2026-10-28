@@ -158,8 +158,16 @@ export const useTimerStore = create<TimerStore>((set, get) => {
 
     async init(d) {
       deps = d;
-      const state = await loadState();
-      set({ state, ready: true });
+      const before = get().state;
+      const persisted = await loadState();
+      if (get().state === before) {
+        // Nothing happened while loading: adopt the persisted state.
+        set({ state: persisted, ready: true });
+      } else {
+        // The user already acted (e.g. pressed Start); keep that and persist it.
+        set({ ready: true });
+        void persistState(get().state);
+      }
       // Reconcile immediately: a phase may have ended while the app was closed.
       get().tick(Date.now());
     },

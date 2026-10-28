@@ -134,7 +134,11 @@ export const useReminderStore = create<ReminderStore>((set, get) => ({
       storedStates.map((r) => [r.kind, r]),
     ) as Partial<ReminderStates>;
     const states = initialStates(settings(), now, existing);
-    const scheduler = storedScheduler ?? INITIAL_SCHEDULER;
+    // A pause chosen before init finished wins over the persisted scheduler row.
+    const scheduler =
+      get().scheduler.pausedUntil !== null
+        ? get().scheduler
+        : (storedScheduler ?? INITIAL_SCHEDULER);
     set({ states, scheduler, ready: true });
     await persist(states, scheduler);
 

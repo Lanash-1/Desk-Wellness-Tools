@@ -26,8 +26,10 @@ test('clearing all data asks for confirmation and wipes the device', async ({ pa
 
   await page.goto('/#/settings');
   await page.getByRole('button', { name: 'Clear all data…' }).click();
+  const reloaded = page.waitForEvent('load');
   await page.getByRole('button', { name: 'Yes, delete everything' }).click();
-  await page.waitForLoadState('load');
+  await reloaded;
+  await expect(page.getByRole('heading', { name: 'Settings' })).toBeVisible();
 
   await page.goto('/#/water');
   await expect(page.getByTestId('water-total')).toHaveText('0');
