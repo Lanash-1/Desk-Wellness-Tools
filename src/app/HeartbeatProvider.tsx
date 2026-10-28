@@ -6,6 +6,7 @@ import { formatClock, phaseLabel, useTimerStore } from '@/store/timerStore';
 import { useReminderStore } from '@/store/reminderStore';
 import { currentPhase, remainingMs } from '@/core/pomodoro/engine';
 import type { Settings } from '@/core/models';
+import { toDayKey } from '@/core/time/dayKey';
 
 /**
  * Wires the platform heartbeat to the runtime stores and mirrors the timer into the
@@ -51,11 +52,22 @@ export function HeartbeatProvider({ children }: { children: ReactNode }) {
   }, [platform, settings]);
 
   // Heartbeat → tick the timer first, then reminders (so break transitions are visible).
+  const dayKeyRef = useRef<string | null>(null);
   useEffect(
     () =>
       platform.heartbeat.subscribe((now) => {
         useTimerStore.getState().tick(now);
         useReminderStore.getState().tick(now);
+        const s = settingsRef.current;
+        const key = toDayKey(now, s?.dayStartHour ?? 0, s?.timeZone ?? null);
+        if (
+          dayKeyRef.current !== null &&
+          dayKeyRef.current !== key &&
+          useTimerStore.getState().state.status === 'idle'
+        ) {
+          useTimerStore.getState().resetCycle();
+        }
+        dayKeyRef.current = key;
       }),
     [platform],
   );

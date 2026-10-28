@@ -8,6 +8,8 @@ import { NotificationBanner } from '@/features/notifications/NotificationBanner'
 import { useTimerStore } from '@/store/timerStore';
 import { useReminderStore } from '@/store/reminderStore';
 import { useWaterToday } from '@/app/useWaterToday';
+import { useStats } from '@/app/useStats';
+import { StreakTiles } from '@/features/stats/StatsPage';
 import { addWater } from '@/storage/water';
 import { Button } from '@/components/Button';
 import { isWorkTime } from '@/core/scheduler/engine';
@@ -15,7 +17,7 @@ import { isWorkTime } from '@/core/scheduler/engine';
 export function TodayPage() {
   const settings = useSettings();
   const platform = usePlatform();
-  const completedFocus = useTimerStore((s) => s.state.completedFocus);
+  const { today, streaks } = useStats(7);
   const now = useTimerStore((s) => s.now);
   const { totalMl } = useWaterToday();
   const states = useReminderStore((s) => s.states);
@@ -48,11 +50,11 @@ export function TodayPage() {
       <NotificationBanner />
       <div className="grid gap-4 sm:grid-cols-2">
         <Card title="Focus">
-          <p className="text-3xl font-semibold">
-            {completedFocus} {completedFocus === 1 ? 'session' : 'sessions'}
+          <p className="text-3xl font-semibold tabular-nums" data-testid="today-focus">
+            {today.focusSessions} {today.focusSessions === 1 ? 'session' : 'sessions'}
           </p>
           <p className="mt-1 text-sm text-slate-500">
-            Goal: {settings?.goals.focusSessionsPerDay ?? '…'} per day
+            {today.focusMinutes} min · goal {settings?.goals.focusSessionsPerDay ?? '…'} sessions
           </p>
         </Card>
         <Card title="Water">
@@ -78,6 +80,17 @@ export function TodayPage() {
             ))}
           </div>
         </Card>
+        <Card title="Breaks today" className="sm:col-span-2">
+          <div className="grid grid-cols-2 gap-3 text-sm sm:grid-cols-4">
+            <Stat label="Moves" value={today.movesDone} goal={settings?.goals.movesPerDay} />
+            <Stat label="Eye rests" value={today.eyeBreaksDone} />
+            <Stat label="Stretches" value={today.stretchesDone} />
+            <Stat label="Posture checks" value={today.postureChecks} />
+          </div>
+        </Card>
+        <div className="sm:col-span-2">
+          <StreakTiles streaks={streaks} compact />
+        </div>
         <Card title="Reminders" className="sm:col-span-2">
           <ul className="divide-y divide-slate-100 dark:divide-slate-800">
             {REMINDER_KINDS.map((kind) => {
@@ -94,5 +107,17 @@ export function TodayPage() {
         </Card>
       </div>
     </>
+  );
+}
+
+function Stat({ label, value, goal }: { label: string; value: number; goal?: number }) {
+  return (
+    <div>
+      <p className="text-2xl font-semibold tabular-nums">{value}</p>
+      <p className="text-xs text-slate-500">
+        {label}
+        {goal ? ` · goal ${goal}` : ''}
+      </p>
+    </div>
   );
 }

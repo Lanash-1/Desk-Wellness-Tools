@@ -151,6 +151,38 @@ export function SettingsPage() {
           </label>
         </Card>
 
+        <Card title="Daily goals">
+          <NumberField
+            label="Focus sessions per day"
+            value={settings.goals.focusSessionsPerDay}
+            min={1}
+            max={16}
+            onChange={(focusSessionsPerDay) =>
+              updateSettings({ goals: { ...settings.goals, focusSessionsPerDay } })
+            }
+          />
+          <NumberField
+            label="Movement breaks per day"
+            value={settings.goals.movesPerDay}
+            min={1}
+            max={16}
+            onChange={(movesPerDay) =>
+              updateSettings({ goals: { ...settings.goals, movesPerDay } })
+            }
+          />
+          <NumberField
+            label="My day starts at"
+            value={settings.dayStartHour}
+            min={0}
+            max={12}
+            suffix="h"
+            onChange={(dayStartHour) => updateSettings({ dayStartHour })}
+          />
+          <p className="text-xs text-slate-500">
+            Streaks skip the days outside your work-hours schedule, so weekends never break them.
+          </p>
+        </Card>
+
         <Card title="Appearance">
           <label className="flex items-center justify-between gap-4 text-sm">
             <span>Theme</span>

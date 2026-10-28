@@ -4,6 +4,7 @@ import {
   INITIAL_STATE,
   pause as enginePause,
   reset as engineReset,
+  resetCycle as engineResetCycle,
   resume as engineResume,
   skip as engineSkip,
   start as engineStart,
@@ -45,6 +46,8 @@ interface TimerStore {
   resume(): void;
   skip(): void;
   reset(): void;
+  /** Clears the long-break cycle count (called when the day changes). */
+  resetCycle(): void;
 }
 
 let deps: TimerDeps | null = null;
@@ -191,6 +194,10 @@ export const useTimerStore = create<TimerStore>((set, get) => {
     reset() {
       const now = Date.now();
       commit(engineReset(get().state, context(now)), now);
+    },
+    resetCycle() {
+      const now = Date.now();
+      commit(engineResetCycle(get().state), now);
     },
   };
 });
