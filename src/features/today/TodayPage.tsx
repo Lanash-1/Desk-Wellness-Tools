@@ -7,6 +7,9 @@ import { REMINDER_LABELS } from '@/core/settings/defaults';
 import { NotificationBanner } from '@/features/notifications/NotificationBanner';
 import { useTimerStore } from '@/store/timerStore';
 import { useReminderStore } from '@/store/reminderStore';
+import { useWaterToday } from '@/app/useWaterToday';
+import { addWater } from '@/storage/water';
+import { Button } from '@/components/Button';
 import { isWorkTime } from '@/core/scheduler/engine';
 
 export function TodayPage() {
@@ -14,6 +17,7 @@ export function TodayPage() {
   const platform = usePlatform();
   const completedFocus = useTimerStore((s) => s.state.completedFocus);
   const now = useTimerStore((s) => s.now);
+  const { totalMl } = useWaterToday();
   const states = useReminderStore((s) => s.states);
   const pausedUntil = useReminderStore((s) => s.scheduler.pausedUntil);
   const paused = pausedUntil !== null && pausedUntil > now;
@@ -52,8 +56,27 @@ export function TodayPage() {
           </p>
         </Card>
         <Card title="Water">
-          <p className="text-3xl font-semibold">0 ml</p>
+          <p className="text-3xl font-semibold tabular-nums" data-testid="today-water">
+            {totalMl} ml
+          </p>
           <p className="mt-1 text-sm text-slate-500">Goal: {settings?.waterGoalMl ?? '…'} ml</p>
+          <div className="mt-3 flex flex-wrap gap-2">
+            {(settings?.waterQuickAddMl ?? []).map((ml) => (
+              <Button
+                key={ml}
+                variant="secondary"
+                className="px-3 py-1 text-xs"
+                onClick={() =>
+                  void addWater(ml, 'manual', {
+                    dayStartHour: settings?.dayStartHour ?? 0,
+                    timeZone: settings?.timeZone ?? null,
+                  })
+                }
+              >
+                +{ml} ml
+              </Button>
+            ))}
+          </div>
         </Card>
         <Card title="Reminders" className="sm:col-span-2">
           <ul className="divide-y divide-slate-100 dark:divide-slate-800">

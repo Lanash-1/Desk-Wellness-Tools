@@ -121,6 +121,36 @@ export function SettingsPage() {
 
         <ReminderSettings settings={settings} />
 
+        <Card title="Water">
+          <NumberField
+            label="Daily goal"
+            value={settings.waterGoalMl}
+            min={250}
+            max={6000}
+            step={50}
+            suffix="ml"
+            onChange={(waterGoalMl) => updateSettings({ waterGoalMl })}
+          />
+          <label className="flex items-center justify-between gap-4 py-2 text-sm">
+            <span className="font-medium">Quick-add amounts</span>
+            <input
+              type="text"
+              inputMode="numeric"
+              aria-label="Quick-add amounts in millilitres, comma separated"
+              defaultValue={settings.waterQuickAddMl.join(', ')}
+              onBlur={(e) => {
+                const values = e.target.value
+                  .split(/[,\s]+/)
+                  .map(Number)
+                  .filter((n) => Number.isFinite(n) && n > 0 && n <= 5000)
+                  .slice(0, 5);
+                if (values.length > 0) void updateSettings({ waterQuickAddMl: values });
+              }}
+              className="w-40 rounded-lg border border-slate-300 bg-transparent px-2 py-1 text-right dark:border-slate-700"
+            />
+          </label>
+        </Card>
+
         <Card title="Appearance">
           <label className="flex items-center justify-between gap-4 text-sm">
             <span>Theme</span>

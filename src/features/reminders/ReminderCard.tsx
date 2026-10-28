@@ -4,6 +4,7 @@ import type { ReminderKind } from '@/core/models';
 import { useReminderStore } from '@/store/reminderStore';
 import { useTimerStore } from '@/store/timerStore';
 import { useSettings } from '@/app/useSettings';
+import { pickStretch } from '@/core/content/stretches';
 
 const EYE_REST_SECONDS = 20;
 
@@ -28,6 +29,8 @@ export function ReminderCard() {
   if (!active) return null;
   const elapsedSec = Math.floor((now - active.firedAt) / 1000);
   const eyeLeft = Math.max(0, EYE_REST_SECONDS - elapsedSec);
+  // Stable for the lifetime of this card; different cards rotate through the library.
+  const stretch = pickStretch(Math.floor(active.firedAt / 60_000));
 
   return (
     <aside
@@ -48,8 +51,19 @@ export function ReminderCard() {
               <p className="text-sm text-slate-500 dark:text-slate-400">
                 {kind === 'eyes' && eyeLeft > 0
                   ? `Look at something far away… ${eyeLeft}s`
-                  : REMINDER_LABELS[kind].body}
+                  : kind === 'stretch'
+                    ? `${stretch.title} · about ${stretch.seconds} s`
+                    : kind === 'move'
+                      ? `${REMINDER_LABELS.move.body} Or try: ${stretch.title.toLowerCase()}.`
+                      : REMINDER_LABELS[kind].body}
               </p>
+              {kind === 'stretch' && (
+                <ol className="mt-1 list-decimal space-y-0.5 pl-4 text-xs text-slate-600 dark:text-slate-300">
+                  {stretch.steps.map((step) => (
+                    <li key={step}>{step}</li>
+                  ))}
+                </ol>
+              )}
             </div>
             {active.kinds.length > 1 && (
               <button
