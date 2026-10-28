@@ -3,10 +3,10 @@ import { Card } from '@/components/Card';
 import { PageHeader } from '@/components/PageHeader';
 import { Toggle } from '@/components/Toggle';
 import { NumberField } from '@/components/NumberField';
+import { ReminderSettings } from './ReminderSettings';
 import { usePlatform } from '@/app/usePlatform';
 import { useSettings } from '@/app/useSettings';
-import { REMINDER_KINDS, type ThemePreference } from '@/core/models';
-import { REMINDER_LABELS } from '@/core/settings/defaults';
+import type { ThemePreference } from '@/core/models';
 import { updateSettings } from '@/storage/settings';
 import type { NotificationPermission } from '@/platform';
 
@@ -119,24 +119,7 @@ export function SettingsPage() {
           />
         </Card>
 
-        <Card title="Reminders">
-          {REMINDER_KINDS.map((kind) => (
-            <Toggle
-              key={kind}
-              label={REMINDER_LABELS[kind].title}
-              description={`Every ${settings.reminders[kind].intervalMin} minutes`}
-              checked={settings.reminders[kind].enabled}
-              onChange={(enabled) =>
-                updateSettings({
-                  reminders: {
-                    ...settings.reminders,
-                    [kind]: { ...settings.reminders[kind], enabled },
-                  },
-                })
-              }
-            />
-          ))}
-        </Card>
+        <ReminderSettings settings={settings} />
 
         <Card title="Appearance">
           <label className="flex items-center justify-between gap-4 text-sm">

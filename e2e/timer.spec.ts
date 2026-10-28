@@ -17,12 +17,12 @@ test('a focus session runs to completion and starts the break', async ({ page })
   await expect(page).toHaveTitle(/· Short break · Desk Wellness$/);
 
   // Pause freezes the clock.
-  await page.getByRole('button', { name: 'Pause' }).click();
+  await page.getByRole('button', { name: 'Pause', exact: true }).click();
   const frozen = await page.getByTestId('timer-clock').textContent();
   await page.clock.fastForward(30_000);
   await expect(page.getByTestId('timer-clock')).toHaveText(frozen!);
   await page.getByRole('button', { name: 'Resume' }).click();
-  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Pause', exact: true })).toBeVisible();
 });
 
 test('the running timer survives a reload', async ({ page }) => {
@@ -30,6 +30,6 @@ test('the running timer survives a reload', async ({ page }) => {
   await page.getByRole('button', { name: 'Start focus' }).click();
   await expect(page.getByTestId('timer-clock')).toHaveText(/^24:5\d$/);
   await page.reload();
-  await expect(page.getByRole('button', { name: 'Pause' })).toBeVisible();
+  await expect(page.getByRole('button', { name: 'Pause', exact: true })).toBeVisible();
   await expect(page.getByTestId('timer-clock')).toHaveText(/^24:[45]\d$/);
 });

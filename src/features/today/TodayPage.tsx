@@ -6,11 +6,30 @@ import { REMINDER_KINDS } from '@/core/models';
 import { REMINDER_LABELS } from '@/core/settings/defaults';
 import { NotificationBanner } from '@/features/notifications/NotificationBanner';
 import { useTimerStore } from '@/store/timerStore';
+import { useReminderStore } from '@/store/reminderStore';
+import { isWorkTime } from '@/core/scheduler/engine';
 
 export function TodayPage() {
   const settings = useSettings();
   const platform = usePlatform();
   const completedFocus = useTimerStore((s) => s.state.completedFocus);
+  const now = useTimerStore((s) => s.now);
+  const states = useReminderStore((s) => s.states);
+  const pausedUntil = useReminderStore((s) => s.scheduler.pausedUntil);
+  const paused = pausedUntil !== null && pausedUntil > now;
+  const offHours = settings ? !isWorkTime(now, settings.workHours, settings.timeZone) : false;
+
+  const describeNext = (kind: (typeof REMINDER_KINDS)[number]): string => {
+    const cfg = settings?.reminders[kind];
+    if (!cfg) return '…';
+    if (!cfg.enabled) return 'off';
+    if (paused) return 'paused';
+    if (offHours) return 'after work hours';
+    const at = states?.[kind].nextFireAt;
+    if (!at) return `every ${cfg.intervalMin} min`;
+    const mins = Math.max(0, Math.round((at - now) / 60_000));
+    return mins === 0 ? 'any moment' : `in ${mins} min`;
+  };
 
   return (
     <>
@@ -39,12 +58,11 @@ export function TodayPage() {
         <Card title="Reminders" className="sm:col-span-2">
           <ul className="divide-y divide-slate-100 dark:divide-slate-800">
             {REMINDER_KINDS.map((kind) => {
-              const cfg = settings?.reminders[kind];
               return (
                 <li key={kind} className="flex items-center justify-between py-2 text-sm">
                   <span>{REMINDER_LABELS[kind].title}</span>
-                  <span className="text-slate-500">
-                    {cfg ? (cfg.enabled ? `every ${cfg.intervalMin} min` : 'off') : '…'}
+                  <span className="text-slate-500" data-testid={`next-${kind}`}>
+                    {describeNext(kind)}
                   </span>
                 </li>
               );

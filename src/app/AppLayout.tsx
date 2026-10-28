@@ -1,4 +1,6 @@
 import { NavLink, Outlet } from 'react-router-dom';
+import { PauseMenu } from '@/features/reminders/PauseMenu';
+import { ReminderCard } from '@/features/reminders/ReminderCard';
 
 const NAV = [
   { to: '/', label: 'Today', icon: '☀️' },
@@ -45,9 +47,13 @@ export function AppLayout() {
       </nav>
       <main className="min-h-0 flex-1 overflow-y-auto">
         <div className="mx-auto w-full max-w-3xl px-4 py-6 md:px-8 md:py-8">
+          <div className="mb-4 flex justify-end">
+            <PauseMenu />
+          </div>
           <Outlet />
         </div>
       </main>
+      <ReminderCard />
     </div>
   );
 }
