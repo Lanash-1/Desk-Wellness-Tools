@@ -5,6 +5,7 @@ import { useSettings } from '@/app/useSettings';
 import { REMINDER_KINDS } from '@/core/models';
 import { REMINDER_LABELS } from '@/core/settings/defaults';
 import { NotificationBanner } from '@/features/notifications/NotificationBanner';
+import { InstallBanner } from '@/features/pwa/InstallBanner';
 import { useTimerStore } from '@/store/timerStore';
 import { useReminderStore } from '@/store/reminderStore';
 import { useWaterToday } from '@/app/useWaterToday';
@@ -48,6 +49,7 @@ export function TodayPage() {
         }
       />
       <NotificationBanner />
+      <InstallBanner />
       <div className="grid gap-4 sm:grid-cols-2">
         <Card title="Focus">
           <p className="text-3xl font-semibold tabular-nums" data-testid="today-focus">

@@ -3,7 +3,15 @@
 Focus timer, hydration tracker and break reminders for people who sit at a desk all day.
 One codebase ships as a **Windows / macOS tray app** (Tauri 2) and as an **installable web app**.
 
-> Status: milestone **M5 – desktop polish**. Focus timer, all five reminders, water tracking, stats and streaks, backup export/import and the tray integration are in place. Remaining: PWA hardening and a final accessibility pass (M6).
+> Status: **v1 feature-complete** (milestones M0–M6). Verified in CI with unit and browser tests; the desktop
+> build is compile-checked in CI and needs a manual pass on Windows/macOS per `docs/RELEASE_CHECKLIST.md`
+> before the first tagged release.
+
+![Today view with a reminder card](docs/screenshots/today-light.png)
+
+| Focus timer                                  | Stats                                      | Settings (dark)                                 |
+| -------------------------------------------- | ------------------------------------------ | ----------------------------------------------- |
+| ![Timer](docs/screenshots/timer-running.png) | ![Stats](docs/screenshots/stats-light.png) | ![Settings](docs/screenshots/settings-dark.png) |
 
 ## Features (v1 scope)
 
@@ -23,7 +31,7 @@ Roadmap: end-of-day summary, ambient sound player, task label per session, optio
 ## Platforms
 
 - **Desktop (recommended)** – lives in the tray, keeps reminding you while the window is hidden, launches at login.
-- **Web / PWA** – same UI in the browser. Notifications only arrive while the tab or installed app is open; the browser has no background service for a closed tab.
+- **Web / PWA** – same UI in the browser. Notifications only arrive while the tab or installed app is open; the browser has no background service for a closed tab. Use the "Install" banner (Chrome/Edge) to run it as its own window with persistent storage.
 
 ## Development
 

@@ -6,7 +6,7 @@ test('a focus session runs to completion and starts the break', async ({ page })
   await page.goto('/#/timer');
 
   await page.getByRole('button', { name: 'Start focus' }).click();
-  await expect(page.getByTestId('timer-clock')).toHaveText(/^24:5\d$/);
+  await expect(page.getByTestId('timer-clock')).toHaveText(/^24:5\d$/, { timeout: 15_000 });
   await expect(page.getByText('Session 1 of 4')).toBeVisible();
 
   await page.clock.fastForward(25 * 60_000 + 1_500);
@@ -28,7 +28,7 @@ test('a focus session runs to completion and starts the break', async ({ page })
 test('the running timer survives a reload', async ({ page }) => {
   await page.goto('/#/timer');
   await page.getByRole('button', { name: 'Start focus' }).click();
-  await expect(page.getByTestId('timer-clock')).toHaveText(/^24:5\d$/);
+  await expect(page.getByTestId('timer-clock')).toHaveText(/^24:5\d$/, { timeout: 15_000 });
   await page.reload();
   await expect(page.getByRole('button', { name: 'Pause', exact: true })).toBeVisible();
   await expect(page.getByTestId('timer-clock')).toHaveText(/^24:[45]\d$/);

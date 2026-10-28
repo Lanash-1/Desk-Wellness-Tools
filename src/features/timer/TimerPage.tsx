@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { PageHeader } from '@/components/PageHeader';
@@ -16,6 +17,40 @@ export function TimerPage() {
 
   const phase = currentPhase(state);
   const inPhase = state.status === 'running' || state.status === 'paused';
+
+  // Keyboard: Space starts/pauses/resumes, S skips, Escape stops.
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const target = e.target as HTMLElement | null;
+      if (
+        target &&
+        (target.tagName === 'INPUT' ||
+          target.tagName === 'SELECT' ||
+          target.tagName === 'TEXTAREA' ||
+          target.isContentEditable)
+      )
+        return;
+      const s = useTimerStore.getState();
+      if (e.key === ' ') {
+        e.preventDefault();
+        if (s.state.status === 'running') s.pause();
+        else if (s.state.status === 'paused') s.resume();
+        else s.start(s.state.status === 'awaitingNext' ? undefined : 'focus');
+      } else if (
+        e.key.toLowerCase() === 's' &&
+        (s.state.status === 'running' || s.state.status === 'paused')
+      ) {
+        s.skip();
+      } else if (
+        e.key === 'Escape' &&
+        (s.state.status === 'running' || s.state.status === 'paused')
+      ) {
+        s.reset();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
   const remaining = inPhase
     ? remainingMs(state, now)
     : (phase === 'focus'

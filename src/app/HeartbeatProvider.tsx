@@ -104,7 +104,12 @@ function TimerMirror() {
   const state = useTimerStore((s) => s.state);
   const now = useTimerStore((s) => s.now);
   const pausedUntil = useReminderStore((s) => s.scheduler.pausedUntil);
+  const activeCount = useReminderStore((s) => s.active?.kinds.length ?? 0);
   const last = useRef<string>('');
+
+  useEffect(() => {
+    platform.window.setBadge(activeCount);
+  }, [platform, activeCount]);
 
   useEffect(() => {
     let title = 'Desk Wellness';
