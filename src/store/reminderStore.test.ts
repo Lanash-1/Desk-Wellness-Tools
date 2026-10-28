@@ -67,14 +67,12 @@ describe('reminderStore', () => {
   it('water Done logs a drink, pause silences, and state is restored on init', async () => {
     const platform = createFakePlatform();
     const settings = { ...(await loadSettings(db)), timeZone: 'UTC' };
-    await useReminderStore
-      .getState()
-      .init({
-        platform,
-        getSettings: () => settings,
-        getPomodoro: () => IDLE,
-        getWaterTodayMl: () => 0,
-      });
+    await useReminderStore.getState().init({
+      platform,
+      getSettings: () => settings,
+      getPomodoro: () => IDLE,
+      getWaterTodayMl: () => 0,
+    });
     const t0 = Date.now();
 
     useReminderStore.getState().tick(t0 + 45 * MIN + 100);
@@ -96,14 +94,12 @@ describe('reminderStore', () => {
 
     // Fresh store instance picks up the persisted schedule.
     _resetReminderStoreForTests();
-    await useReminderStore
-      .getState()
-      .init({
-        platform,
-        getSettings: () => settings,
-        getPomodoro: () => IDLE,
-        getWaterTodayMl: () => 0,
-      });
+    await useReminderStore.getState().init({
+      platform,
+      getSettings: () => settings,
+      getPomodoro: () => IDLE,
+      getWaterTodayMl: () => 0,
+    });
     expect(useReminderStore.getState().scheduler.pausedUntil).toBe(t0 + 45 * MIN + 100 + 60 * MIN);
     expect(useReminderStore.getState().states?.water.nextFireAt).toBeGreaterThan(t0 + 60 * MIN);
   });
