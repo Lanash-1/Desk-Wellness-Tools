@@ -3,7 +3,7 @@
 Focus timer, hydration tracker and break reminders for people who sit at a desk all day.
 One codebase ships as a **Windows / macOS tray app** (Tauri 2) and as an **installable web app**.
 
-> Status: milestone **M1 – Pomodoro + notifications**. The focus timer works end to end on both platforms (absolute-time engine, heartbeat, OS notifications, sounds, tray/title countdown, restart recovery). Reminders, water tracking and stats follow in the next milestones.
+> Status: milestone **M5 – desktop polish**. Focus timer, all five reminders, water tracking, stats and streaks, backup export/import and the tray integration are in place. Remaining: PWA hardening and a final accessibility pass (M6).
 
 ## Features (v1 scope)
 
@@ -79,10 +79,18 @@ docs/          release checklist
 - **In-app reminder cards first.** Native notification action buttons are a bonus; every reminder also shows an
   in-app card with Done / Snooze / Dismiss.
 
+## Backups
+
+Settings → **Your data** exports everything (settings, sessions, drinks, reminder events) as a JSON file and
+imports it back, either merging with what is on the device or replacing it. Device-local scheduler state
+(the next-fire times) is intentionally not part of a backup.
+
 ## Releases
 
 - Pushing a `v*` tag builds Windows (NSIS + MSI) and macOS (universal DMG) installers via GitHub Actions and
-  publishes a **draft** release.
+  publishes a **draft** release. To cut one: bump `version` in `package.json`, `src-tauri/tauri.conf.json`
+  and `src-tauri/Cargo.toml`, commit, then `git tag v0.1.0 && git push origin v0.1.0`. Walk through
+  `docs/RELEASE_CHECKLIST.md` on a real Windows and macOS machine before publishing the draft.
 - Builds are unsigned by default. On macOS, right-click → Open the app the first time (or run
   `xattr -cr "/Applications/Desk Wellness.app"`). Adding the `APPLE_*` secrets enables signing and notarization
   with no workflow changes.

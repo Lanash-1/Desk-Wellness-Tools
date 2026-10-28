@@ -7,6 +7,7 @@ import { useReminderStore } from '@/store/reminderStore';
 import { currentPhase, remainingMs } from '@/core/pomodoro/engine';
 import type { Settings } from '@/core/models';
 import { toDayKey } from '@/core/time/dayKey';
+import { DesktopIntegration } from './DesktopIntegration';
 
 /**
  * Wires the platform heartbeat to the runtime stores and mirrors the timer into the
@@ -92,6 +93,7 @@ export function HeartbeatProvider({ children }: { children: ReactNode }) {
     <>
       <TimerMirror />
       <TrayMenu />
+      <DesktopIntegration />
       {children}
     </>
   );

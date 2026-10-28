@@ -25,6 +25,7 @@ export function createFakePlatform(): FakePlatform {
       notificationActions: true,
       reliableBackground: true,
       idle: false,
+      dockIcon: false,
     },
     shown: [],
     played: [],
@@ -69,6 +70,10 @@ export function createFakePlatform(): FakePlatform {
       onCloseRequested: () => () => {},
       setTitle: () => {},
       setBadge: () => {},
+    },
+    files: {
+      saveText: async () => true,
+      openText: async () => null,
     },
     openExternal: async () => {},
     quit: async () => {},

@@ -9,6 +9,8 @@ import {
 } from '@tauri-apps/plugin-notification';
 import { disable, enable, isEnabled } from '@tauri-apps/plugin-autostart';
 import { openUrl } from '@tauri-apps/plugin-opener';
+import { open as openDialog, save as saveDialog } from '@tauri-apps/plugin-dialog';
+import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
 import { createAudio } from './audio';
 import type { NotificationActionId, Platform, TrayMenuItem, TrayState } from './types';
 
@@ -44,6 +46,7 @@ export function createTauriPlatform(): Platform {
       notificationActions: false,
       reliableBackground: true,
       idle: false,
+      dockIcon: navigator.userAgent.includes('Mac'),
     },
 
     notifications: {
@@ -140,6 +143,31 @@ export function createTauriPlatform(): Platform {
         if (enabled) await enable();
         else await disable();
       },
+    },
+
+    files: {
+      async saveText(fileName, text) {
+        const path = await saveDialog({
+          defaultPath: fileName,
+          filters: [{ name: 'JSON', extensions: ['json'] }],
+        });
+        if (!path) return false;
+        await writeTextFile(path, text);
+        return true;
+      },
+      async openText() {
+        const path = await openDialog({
+          multiple: false,
+          directory: false,
+          filters: [{ name: 'JSON', extensions: ['json'] }],
+        });
+        if (!path || Array.isArray(path)) return null;
+        return readTextFile(path);
+      },
+    },
+
+    async setDockVisible(visible) {
+      await invoke('set_dock_visible', { visible });
     },
 
     async openExternal(url) {

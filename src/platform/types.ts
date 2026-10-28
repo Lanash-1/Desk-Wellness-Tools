@@ -37,6 +37,8 @@ export interface PlatformCapabilities {
   /** True when the scheduler keeps running with the UI hidden (desktop). */
   reliableBackground: boolean;
   idle: boolean;
+  /** macOS only: the Dock icon can be hidden so the app lives in the menu bar. */
+  dockIcon: boolean;
 }
 
 export interface Platform {
@@ -90,6 +92,15 @@ export interface Platform {
     isEnabled(): Promise<boolean>;
     set(enabled: boolean): Promise<void>;
   };
+
+  files: {
+    /** Offers `text` as a download / save dialog. Resolves false when the user cancelled. */
+    saveText(fileName: string, text: string, mimeType?: string): Promise<boolean>;
+    /** Lets the user pick a text file. Resolves null when cancelled. */
+    openText(accept?: string): Promise<string | null>;
+  };
+
+  setDockVisible?(visible: boolean): Promise<void>;
 
   idle?: {
     idleSeconds(): Promise<number>;

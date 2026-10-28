@@ -43,6 +43,7 @@ export function createWebPlatform(): Platform {
       notificationActions: 'serviceWorker' in navigator,
       reliableBackground: false,
       idle: false,
+      dockIcon: false,
     },
 
     notifications: {
@@ -145,6 +146,46 @@ export function createWebPlatform(): Platform {
         };
         if (count > 0) nav.setAppBadge?.(count).catch(() => {});
         else nav.clearAppBadge?.().catch(() => {});
+      },
+    },
+
+    files: {
+      async saveText(fileName, text, mimeType = 'application/json') {
+        const blob = new Blob([text], { type: mimeType });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        setTimeout(() => URL.revokeObjectURL(url), 10_000);
+        return true;
+      },
+      openText(accept = '.json,application/json') {
+        return new Promise((resolve) => {
+          const input = document.createElement('input');
+          input.type = 'file';
+          input.accept = accept;
+          let settled = false;
+          const finish = (value: string | null) => {
+            if (settled) return;
+            settled = true;
+            resolve(value);
+          };
+          input.onchange = () => {
+            const file = input.files?.[0];
+            if (!file) return finish(null);
+            file.text().then(finish, () => finish(null));
+          };
+          // Browsers fire no cancel event; if focus returns and no file was chosen, give up.
+          window.addEventListener(
+            'focus',
+            () => setTimeout(() => (input.files?.length ? undefined : finish(null)), 1000),
+            { once: true },
+          );
+          input.click();
+        });
       },
     },
 

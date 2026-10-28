@@ -4,6 +4,7 @@ import { PageHeader } from '@/components/PageHeader';
 import { Toggle } from '@/components/Toggle';
 import { NumberField } from '@/components/NumberField';
 import { ReminderSettings } from './ReminderSettings';
+import { DataSettings } from './DataSettings';
 import { usePlatform } from '@/app/usePlatform';
 import { useSettings } from '@/app/useSettings';
 import type { ThemePreference } from '@/core/models';
@@ -198,6 +199,8 @@ export function SettingsPage() {
           </label>
         </Card>
 
+        <DataSettings />
+
         {platform.caps.autostart && (
           <Card title="Desktop">
             <Toggle
@@ -215,6 +218,16 @@ export function SettingsPage() {
                 updateSettings({ desktop: { ...settings.desktop, closeToTray } })
               }
             />
+            {platform.caps.dockIcon && (
+              <Toggle
+                label="Show the Dock icon"
+                description="Turn off to keep Desk Wellness in the menu bar only."
+                checked={settings.desktop.showDockIcon}
+                onChange={(showDockIcon) =>
+                  updateSettings({ desktop: { ...settings.desktop, showDockIcon } })
+                }
+              />
+            )}
             <button
               type="button"
               className="mt-2 text-sm text-red-600 hover:underline"
